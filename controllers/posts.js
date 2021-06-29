@@ -1,12 +1,14 @@
 const Post = require('../models/post');
+const fs = require('fs');
 
 exports.createThing = (req, res, next) => {
-    const postObject = JSON.parse(req.body.post);
+    const postObject = req.body;
+    console.log(postObject)
     delete postObject._id;
     const post = new Post({
         ...postObject
     });
-    Post.save()
+    post.save()
     .then(() => res.status(201).json({message: 'Objet enregistré!'}))
     .catch(error => res.status(400).json({error}));
 };
@@ -23,17 +25,10 @@ exports.modifyThing = (req,res,next) =>{
 };
 
 exports.deleteThing = (req, res, next) => {
-    Post.findOne({_id: req.params.id})
-    .then(thing => {
-        fs.unlink( () => {
-
-            Post.deleteOne({_id: req.params.id})
-            .then(() => res.status(200).json({message:'objet supprimé!'}))
-            .catch(error => res.status(404).json({error}));
-
-        })
-    })
-    .catch(error => res.status(500).json({error}));
+    console.log(req.params.id)
+    Post.deleteOne({_id: req.params.id})
+        .then(() => res.status(200).json({message:'objet supprimé!'}))
+        .catch(error => res.status(404).json({error}));
 
    
 };
