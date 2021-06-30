@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 exports.createThing = (req, res, next) => {
     const postObject = req.body;
@@ -40,7 +41,27 @@ exports.getOneThing = (req, res, next) => {
 }
 
 exports.getAllThings = (req, res, next) => {
-    Post.find()
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+    Post.find({userId: userId })
     .then(things => res.status(200).json(things))
     .catch(error => res.status(400).json({error}));
   }
+
+
+
+exports.getMyThings = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const userId = decodedToken.userId;
+    Post.find({userId: userId })
+    .then(things => res.status(200).json(things))
+    .catch(error => res.status(400).json({error}));
+  }
+
+ // exports.getAllThings = (req, res, next) => {
+ //   Post.find()
+ //   .then(things => res.status(200).json(things))
+ //   .catch(error => res.status(400).json({error}));
+ // }
